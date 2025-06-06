@@ -3,6 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 
+
 const Car = require('../models/tb_car.model');
 const User = require('../models/tb_user.model');
 const Counter = require('../models/tb_counter.model');
@@ -93,4 +94,33 @@ router.get('/mycars', authenticateToken, async (req, res) => {
     }
 });
 
-module.exports = router;
+// 🔹 Carlist에서 전체 차량 목록 조회 라우터 (로그인 안 해도 됨)
+router.get('/all', async (req, res) => {
+    try {
+        const cars = await Car.find().sort({ car_number: 1 }); // 차량 번호 순 정렬
+        res.status(200).json({ cars });
+    } catch (err) {
+        console.error('🚨 차량 전체 조회 실패:', err);
+        res.status(500).json({ error: '차량 전체 조회 실패', detail: err.message });
+    }
+});
+
+//mainpage에 쓰는 CarCard 최근 3개만 불러오게 하는거거
+router.get('/recent', async (req, res) => {
+  try {
+    const cars = await Car.find().sort({ created_at: -1 }).limit(3);
+    res.json({ cars });
+  } catch (error) {
+    console.error('❌ 최근 차량 조회 실패:', error);
+    res.status(500).json({ message: '서버 오류' });
+  }
+});
+
+const deleteCarById = async (carId, userId) => {
+  const deletedCar = await Car.findOneAndDelete({ _id: carId, seller_id: userId });
+  return deletedCar;
+};
+
+module.exports = {
+  deleteCarById
+};

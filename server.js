@@ -28,14 +28,14 @@ mongoose.connect(mongoUri)
 // 라우터 연결
 const userservice = require('./service/user.service'); // ✅ 올바른 경로
 const oauthservice = require('./service/genesis.service');
-const carservice = require('./service/car.service');
+
 const carroutes = require('./routes/car.routes');
 const walletrouter = require('./routes/wallet.route');
 const carListService = require('./service/carList.service');
 
 app.use('/api/users', userservice);
 app.use('/oauth', oauthservice);
-app.use('/api/car', carservice);
+
 app.use('/api/car', carroutes);        // ✅ 새로 만든 car.routes.js 라우터 (겹치지 않으면 둘 다 사용 가능)
 app.use('/api/wallet', walletrouter);
 app.use('/uploads', express.static('uploads')); // 이미지 정적 경로
